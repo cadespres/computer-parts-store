@@ -11,7 +11,7 @@ const schema = new Schema({
   },
   itemId: { type:ObjectId, ref: "Item" },
   items: [{ type:ObjectId, ref: "Item" }],
-  status: String,
+  status: { type: String, default: 'placed' },
   subTotal: Number,
   taxes: Number,
   totalPrice: Number
