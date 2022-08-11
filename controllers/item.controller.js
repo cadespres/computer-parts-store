@@ -10,14 +10,29 @@ class ItemController {
   }
 
   static async apiPostItem(req, res, next) {
-    const item = new Item({
-      name: req.body.name,
-      description: req.body.description,
-      type: req.body.type,
-      price: req.body.price
-    });
-    await item.save();
-    res.send(item);
+
+    try {
+      const item = new Item({
+        name: req.body.name,
+        description: req.body.description,
+        type: req.body.type,
+        price: req.body.price
+      });
+      await item.save();
+      res.send(item);
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        let errors = {};
+
+        Object.keys(error.errors).forEach((key) => {
+          errors[key] = error.errors[key].message;
+        });
+
+        return res.status(400).send(errors);
+      }
+      res.status(500).send("Something went wrong");
+    }
+
   }
 
   static async apiPatchItem(req, res, next) {
@@ -34,8 +49,7 @@ class ItemController {
       })
     } catch (e) {
       if (e instanceof ExpectedError) {
-        res.status(404).json({error: e.message})
-        return
+        return res.status(404).json({error: e.message})
       }
       console.log(`Unexpected error ${e}`)
       res.status(500).json({error: "Internal server error, see logs for more details"})
@@ -52,8 +66,7 @@ class ItemController {
     res.status(204).send();
     } catch (e) {
       if (e instanceof ExpectedError) {
-        res.status(404).json({error: e.message})
-        return
+        return res.status(404).json({error: e.message})
       }
       console.log(`Unexpected error ${e}`)
       res.status(500).json({error: "Internal server error, see logs for more details"})
