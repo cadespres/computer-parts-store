@@ -7,11 +7,13 @@ const schema = new Schema({
   customer: {
     firstName: String,
     lastName: String,
-    address1: String,
+    address: String,
   },
+  itemId: { type:ObjectId, ref: "Item" },
   items: [{ type:ObjectId, ref: "Item" }],
   status: String,
   subTotal: Number,
+  taxes: Number,
   totalPrice: Number
 });
 
